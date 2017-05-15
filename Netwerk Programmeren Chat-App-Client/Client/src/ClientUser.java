@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -23,6 +24,10 @@ public class ClientUser {
             }
         }
         catch (IOException e) {
+            JOptionPane.showMessageDialog(null,
+                    "Host or port incorect. Please try again!",
+                    "Connection error",
+                    JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
