@@ -1,44 +1,61 @@
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
+import java.util.List;
 
 /**
  * Created by Ian on 8-5-2017.
  */
-public class ServerUser {
+public class ServerUser implements Serializable {
     private String userName;
-    private Socket userSocket;
-    private DataInputStream input;
-    private DataOutputStream output;
+    private transient Socket userSocket;
+    private transient DataInputStream fromClientData;
+    private transient DataOutputStream toClientData;
+    private transient ObjectInputStream fromClientObject;
+    private transient ObjectOutputStream toClientObject;
 
-    public ServerUser(Socket userSocket) {
+    public ServerUser(Socket userSocket, List<ServerUser> connectUsers) {
         this.userSocket = userSocket;
         try {
-            input = new DataInputStream(this.userSocket.getInputStream());
-            output = new DataOutputStream(this.userSocket.getOutputStream());
+            fromClientData = new DataInputStream(this.userSocket.getInputStream());
+            toClientData = new DataOutputStream(this.userSocket.getOutputStream());
+            toClientObject = new ObjectOutputStream(this.userSocket.getOutputStream());
+            toClientObject.flush();
+            fromClientObject = new ObjectInputStream(this.userSocket.getInputStream());
             while (userName == null) {
-                userName = input.readUTF();
+                userName = fromClientData.readUTF();
             }
-            output.writeUTF("Welkom " + userName);
+            toClientObject.writeObject(connectUsers);
+            toClientObject.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void sendMessage(String message) {
-        try {
-            output.writeUTF(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public String getUserName() {
+        return userName;
     }
 
-    public void sendPing(int timeInMS) {
-        try {
-            output.writeInt(timeInMS);
-        } catch (IOException e) {
-            e.printStackTrace();
+    public DataInputStream getFromClientData() {
+        return fromClientData;
+    }
+
+    public DataOutputStream getToClientData() {
+        return toClientData;
+    }
+
+    public ObjectInputStream getFromClientObject() {
+        return fromClientObject;
+    }
+
+    public ObjectOutputStream getToClientObject() {
+        return toClientObject;
+    }
+
+    public class CommandListener implements Runnable{
+
+        @Override
+        public void run() {
+
         }
     }
 }
