@@ -1,10 +1,12 @@
+package Client;
+
 import javax.swing.*;
 
 /**
  * Created by Ian on 8-5-2017.
  */
 public class ClientMenuBar extends JMenuBar {
-    private ClientPanel panel;
+    private Client.ClientPanel panel;
 
     public ClientMenuBar(ClientPanel panel) {
         super();

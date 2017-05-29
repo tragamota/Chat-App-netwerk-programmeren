@@ -1,3 +1,5 @@
+package Client;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -11,7 +13,7 @@ public class GUI extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new Dimension(400, 600));
 
-        ClientPanel panel = new ClientPanel();
+        Client.ClientPanel panel = new ClientPanel();
 
         setContentPane(panel);
         setJMenuBar(new ClientMenuBar(panel));
@@ -21,6 +23,4 @@ public class GUI extends JFrame {
     public static void main(String args[]) {
         new GUI();
     }
-
-
 }
