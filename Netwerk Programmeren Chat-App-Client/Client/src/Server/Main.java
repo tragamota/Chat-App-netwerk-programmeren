@@ -13,26 +13,28 @@ public class Main {
     private ServerSocket serverSocket;
     private List<ServerUser> connectedUsers;
 
+    private Thread reupdate;
+    private Thread messageReader;
+
     public Main() {
         connectedUsers = new ArrayList<>();
+        messageReader = new Thread();
         try {
             serverSocket = new ServerSocket(port);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         run();
     }
 
     private void run() {
-        while(true) {
+        while (true) {
             try {
                 Socket socket = serverSocket.accept();
-                ServerUser serverUser = new ServerUser(socket, (ArrayList<ServerUser>) connectedUsers);
-                connectedUsers.add(serverUser);
-                System.out.println(connectedUsers);
-            }
-            catch (IOException e) {
+                connectedUsers.add(new ServerUser(socket, (ArrayList<ServerUser>) connectedUsers));
+                reupdate = new Thread(new UpdateAllClients(connectedUsers));
+                reupdate.start();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }

@@ -1,7 +1,6 @@
 package Server;
 
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,29 +8,30 @@ import java.util.List;
  * Created by Ian on 29-5-2017.
  */
 public class UpdateAllClients implements Runnable {
-    private List<ServerUser> connectedUsers, users;
+    private List<ServerUser> connectedUsers;
 
     public UpdateAllClients(List<ServerUser> connectedUsers) {
         this.connectedUsers = new ArrayList<>();
         this.connectedUsers.addAll(connectedUsers);
-        this.users = connectedUsers;
     }
 
     @Override
     public void run() {
-        updateAllUsers(connectedUsers);
+        updateAllUsers(connectedUsers.size() - 1, connectedUsers);
     }
 
-    public void updateAllUsers(List<ServerUser> users) {
-        ObjectOutputStream outputStream = users.get(0).getToObjectClient();
-        if(users.isEmpty()) {
+    public void updateAllUsers(int index, List<ServerUser> connectedUsers) {
+        if(index < 0) {
             return;
         }
         else {
+            ServerUser user = connectedUsers.get(0);
+            connectedUsers.remove(0);
             try {
-                users.get(0).getToObjectClient().writeObject(this.users);
-                users.remove(0);
-                updateAllUsers(users);
+                user.getToObjectClient().writeObject(connectedUsers);
+                user.getToObjectClient().flush();
+                connectedUsers.add(user);
+                updateAllUsers(index - 1, connectedUsers);
             }
             catch (IOException e) {
                 e.printStackTrace();
