@@ -39,17 +39,14 @@ public class ClientConnect extends JPanel {
         add(bottomButtons, BorderLayout.SOUTH);
 
         JPanel adressPanel = new JPanel();
-        adressPanel.add(new JLabel("Ip address: "));
-        adress = new JTextField(8);
-        port = new JTextField(5);
-        userName = new JTextField(15);
+        adress = new JTextField(6);
+        port = new JTextField(4);
+        userName = new JTextField(5);
         adressPanel.add(adress);
-        adressPanel.add(new JLabel("Port: "));
         adressPanel.add(port);
         add(adressPanel, BorderLayout.NORTH);
 
         JPanel userNamePanel = new JPanel();
-        userNamePanel.add(new JLabel("Display name: "));
         userNamePanel.add(userName);
         add(userNamePanel, BorderLayout.CENTER);
     }
