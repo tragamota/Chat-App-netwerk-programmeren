@@ -31,10 +31,12 @@ public class UpdateAllClients implements Runnable {
                 user.getToObjectClient().writeObject(connectedUsers);
                 user.getToObjectClient().flush();
                 connectedUsers.add(user);
-                updateAllUsers(index - 1, connectedUsers);
             }
             catch (IOException e) {
                 e.printStackTrace();
+            }
+            finally {
+                updateAllUsers(index - 1, connectedUsers);
             }
         }
     }

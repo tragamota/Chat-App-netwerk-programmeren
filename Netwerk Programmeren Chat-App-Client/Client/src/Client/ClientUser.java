@@ -5,6 +5,7 @@ import Server.ServerUser;
 import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,6 +55,7 @@ public class ClientUser {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+        new Thread(new ConnectedUsersListener(fromServerObject, (ArrayList<ServerUser>) connectedClients)).start();
     }
 
     public void disconnectFromServer() {

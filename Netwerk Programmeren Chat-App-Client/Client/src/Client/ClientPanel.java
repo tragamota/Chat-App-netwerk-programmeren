@@ -1,9 +1,8 @@
 package Client;
 
 import Server.ServerUser;
-
 import javax.swing.*;
-
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,9 +14,18 @@ public class ClientPanel extends JPanel {
     private List<ServerUser> connectedClients;
     //private List<Chat> chats;
 
+    private JTable listConnectedUsers;
+
     public ClientPanel() {
+        super(new BorderLayout());
         connectedClients = new ArrayList<>();
         user = new ClientUser(connectedClients);
+
+        listConnectedUsers = new JTable();
+        listConnectedUsers.ad;
+
+
+
     }
 
     public ClientUser getUser() {

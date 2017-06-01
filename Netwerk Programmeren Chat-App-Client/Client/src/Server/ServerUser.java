@@ -7,7 +7,7 @@ import java.util.ArrayList;
 /**
  * Created by Ian on 8-5-2017.
  */
-public class ServerUser implements Serializable {
+public class ServerUser implements Serializable, Comparable<ServerUser> {
     private String userName;
     private transient Socket userSocket;
     private transient ObjectInputStream fromObjectClient;
@@ -48,5 +48,10 @@ public class ServerUser implements Serializable {
 
     public DataOutputStream getToClient() {
         return toClient;
+    }
+
+    @Override
+    public int compareTo(ServerUser o) {
+        return userName.compareTo(o.userName);
     }
 }
