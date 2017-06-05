@@ -3,6 +3,7 @@ package Server;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Ian on 8-5-2017.
@@ -11,24 +12,23 @@ public class ServerUser implements Serializable, Comparable<ServerUser> {
     private String userName;
     private transient Socket userSocket;
     private transient ObjectInputStream fromObjectClient;
-    private transient DataInputStream fromClient;
     private transient ObjectOutputStream toObjectClient;
-    private transient DataOutputStream toClient;
 
-    public ServerUser(Socket userSocket, ArrayList<ServerUser> users) {
+    public ServerUser(Socket userSocket) {
         this.userSocket = userSocket;
+    }
+
+    public void buildStreams(List<ServerUser> users) {
         try {
+            //ObjectStreams
             toObjectClient = new ObjectOutputStream(this.userSocket.getOutputStream());
             toObjectClient.flush();
             fromObjectClient = new ObjectInputStream(this.userSocket.getInputStream());
-            toClient = new DataOutputStream(this.userSocket.getOutputStream());
-            fromClient = new DataInputStream(this.userSocket.getInputStream());
-            while(userName == null) {
-                userName = fromClient.readUTF();
-            }
+            //read username
+            userName = fromObjectClient.readUTF();
+            //send all connectedUsers
             toObjectClient.writeObject(users);
-            toClient.flush();
-
+            toObjectClient.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -38,16 +38,12 @@ public class ServerUser implements Serializable, Comparable<ServerUser> {
         return fromObjectClient;
     }
 
-    public DataInputStream getFromClient() {
-        return fromClient;
-    }
-
     public ObjectOutputStream getToObjectClient() {
         return toObjectClient;
     }
 
-    public DataOutputStream getToClient() {
-        return toClient;
+    public String getUserName() {
+        return userName;
     }
 
     @Override

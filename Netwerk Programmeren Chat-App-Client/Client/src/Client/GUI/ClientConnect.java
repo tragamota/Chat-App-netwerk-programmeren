@@ -1,4 +1,6 @@
-package Client;
+package Client.GUI;
+
+import Client.ClientUser;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +11,6 @@ import java.awt.*;
 public class ClientConnect extends JPanel {
     private JFrame frame;
     private ClientUser user;
-
     private JTextField adress, port, userName;
 
     public ClientConnect(ClientUser user) {

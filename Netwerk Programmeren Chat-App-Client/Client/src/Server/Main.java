@@ -13,12 +13,8 @@ public class Main {
     private ServerSocket serverSocket;
     private List<ServerUser> connectedUsers;
 
-    private Thread reupdate;
-    private Thread messageReader;
-
     public Main() {
-        connectedUsers = new ArrayList<>();
-        messageReader = new Thread();
+        connectedUsers = Collections.synchronizedList(new ArrayList<>());
         try {
             serverSocket = new ServerSocket(port);
         } catch (IOException e) {
@@ -31,9 +27,9 @@ public class Main {
         while (true) {
             try {
                 Socket socket = serverSocket.accept();
-                connectedUsers.add(new ServerUser(socket, (ArrayList<ServerUser>) connectedUsers));
-                reupdate = new Thread(new UpdateAllClients(connectedUsers));
-                reupdate.start();
+                ServerUser newUser = new ServerUser(socket);
+                connectedUsers.add(newUser);
+                new Thread(new ClientBuilder(newUser, connectedUsers)).start();
             } catch (IOException e) {
                 e.printStackTrace();
             }

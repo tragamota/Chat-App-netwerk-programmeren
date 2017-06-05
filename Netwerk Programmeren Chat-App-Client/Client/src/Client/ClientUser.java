@@ -1,11 +1,12 @@
 package Client;
 
+import Client.Listeners.InputListener;
+import Server.Chat;
 import Server.ServerUser;
 
 import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,18 +15,16 @@ import java.util.List;
 public class ClientUser {
     private String userName;
     private Socket clientSocket;
-    private DataInputStream fromServerData;
-    private DataOutputStream toServerData;
     private ObjectOutputStream toServerObject;
     private ObjectInputStream fromServerObject;
 
     private List<ServerUser> connectedClients;
+    private List<Chat> chats;
 
-    public ClientUser(List<ServerUser> connectedClients) {
+    public ClientUser(List<ServerUser> connectedClients, List<Chat> chats) {
         this.connectedClients = connectedClients;
+        this.chats = chats;
         userName = null;
-        fromServerData = null;
-        toServerData = null;
         toServerObject = null;
         fromServerObject = null;
     }
@@ -35,15 +34,13 @@ public class ClientUser {
             if(clientSocket == null) {
                 this.userName = username;
                 clientSocket = new Socket(address, port);
-                fromServerData = new DataInputStream(this.clientSocket.getInputStream());
-                toServerData = new DataOutputStream(this.clientSocket.getOutputStream());
                 toServerObject = new ObjectOutputStream(this.clientSocket.getOutputStream());
                 toServerObject.flush();
                 fromServerObject = new ObjectInputStream(this.clientSocket.getInputStream());
-                toServerData.writeUTF(username);
-                toServerData.flush();
-                connectedClients = (List<ServerUser>) fromServerObject.readObject();
-                System.out.println(connectedClients);
+                toServerObject.writeUTF(username);
+                toServerObject.flush();
+                List<ServerUser> serverUsers = (List<ServerUser>) fromServerObject.readObject();
+                connectedClients.addAll(serverUsers);
             }
         }
         catch (IOException e) {
@@ -55,7 +52,7 @@ public class ClientUser {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        new Thread(new ConnectedUsersListener(fromServerObject, (ArrayList<ServerUser>) connectedClients)).start();
+        new Thread(new InputListener(fromServerObject, connectedClients, chats)).start();
     }
 
     public void disconnectFromServer() {
@@ -63,15 +60,11 @@ public class ClientUser {
             try {
                 //closing connections
                 clientSocket.close();
-                fromServerData.close();
                 fromServerObject.close();
-                toServerData.close();
                 toServerObject.close();
                 //cleaning the variables
                 clientSocket = null;
-                fromServerData = null;
                 fromServerObject = null;
-                toServerData = null;
                 toServerObject = null;
             }
             catch (IOException e) {
@@ -80,12 +73,8 @@ public class ClientUser {
         }
     }
 
-    public DataInputStream getFromServerData() {
-        return fromServerData;
-    }
-
-    public DataOutputStream getToServerData() {
-        return toServerData;
+    public String getUserName() {
+        return userName;
     }
 
     public ObjectOutputStream getToServerObject() {

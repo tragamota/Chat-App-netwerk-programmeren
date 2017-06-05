@@ -1,4 +1,6 @@
-package Client;
+package Client.GUI;
+
+import Client.ClientPanel;
 
 import javax.swing.*;
 
