@@ -29,7 +29,7 @@ public class ClientPanel extends JPanel implements ActionListener {
         super(new BorderLayout());
         connectedClients = Collections.synchronizedList(new ArrayList<>());
         chats = new ArrayList<>();
-        user = new ClientUser(connectedClients,chats);
+
 
         JPanel middelPanel = new JPanel(new FlowLayout());
         UsersList = new UsersListTable(connectedClients);
@@ -48,12 +48,13 @@ public class ClientPanel extends JPanel implements ActionListener {
         southPanel.add(sendButton);
         add(southPanel, BorderLayout.SOUTH);
 
-        messageView = new JTextArea(20 , 20);
+        messageView = new JTextArea(20 , 40);
         messageView.setLineWrap(true);
         messageView.setWrapStyleWord(true);
         messageView.setEditable(false);
         middelPanel.add(new JScrollPane(messageView));
         add(middelPanel, BorderLayout.CENTER);
+        user = new ClientUser(connectedClients,chats, messageView);
 
         new Timer(100, this).start();
     }

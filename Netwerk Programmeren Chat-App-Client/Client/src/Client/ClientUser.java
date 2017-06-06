@@ -5,6 +5,7 @@ import Server.Chat;
 import Server.ServerUser;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.List;
@@ -21,12 +22,15 @@ public class ClientUser {
     private List<ServerUser> connectedClients;
     private List<Chat> chats;
 
-    public ClientUser(List<ServerUser> connectedClients, List<Chat> chats) {
+    private JTextArea messageView;
+
+    public ClientUser(List<ServerUser> connectedClients, List<Chat> chats , JTextArea mesView) {
         this.connectedClients = connectedClients;
         this.chats = chats;
         userName = null;
         toServerObject = null;
         fromServerObject = null;
+        this.messageView = mesView;
     }
 
     public void connectToServer(String address, int port, String username) {
@@ -52,7 +56,7 @@ public class ClientUser {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        new Thread(new InputListener(fromServerObject, connectedClients, chats)).start();
+        new Thread(new InputListener(fromServerObject, connectedClients, chats, messageView)).start();
     }
 
     public void disconnectFromServer() {

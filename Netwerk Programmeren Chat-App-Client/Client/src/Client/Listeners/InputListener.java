@@ -3,6 +3,8 @@ package Client.Listeners;
 import Server.Chat;
 import Server.ServerUser;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Collections;
@@ -17,11 +19,15 @@ public class InputListener implements Runnable {
     private ObjectInputStream fromServer;
     private List<ServerUser> connectedUsers;
     private List<Chat> chats;
+    private JTextArea messageView;
+    private String tekst;
 
-    public InputListener(ObjectInputStream fromServer, List<ServerUser> connectedUsers, List<Chat> chats) {
+    public InputListener(ObjectInputStream fromServer, List<ServerUser> connectedUsers, List<Chat> chats, JTextArea mesView) {
         this.fromServer = fromServer;
         this.connectedUsers = connectedUsers;
         this.chats = chats;
+        this.messageView = mesView;
+        this.tekst = "";
     }
 
     @Override
@@ -39,8 +45,17 @@ public class InputListener implements Runnable {
                     else if(inputObject instanceof Chat) {
                         Chat chat = (Chat) inputObject;
                         System.out.println(chat.getMessage());
-                        chats.add((Chat) inputObject);
+                        chats.add(chat);
                         Collections.sort(chats);
+                        for(Chat c : chats){
+                            if(tekst.equals("")){
+                                tekst = c.getTimeFromSending() + " " + c.getMessageFrom() + " ; \n" + c.getMessage() + "\n";
+                            }else {
+                                tekst += c.getTimeFromSending() + " " + c.getMessageFrom() + " ;\n" + c.getMessage() + "\n";
+                            }
+                        }
+                        messageView.setText(tekst);
+                        tekst= "";
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
