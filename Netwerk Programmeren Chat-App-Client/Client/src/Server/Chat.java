@@ -7,7 +7,7 @@ import java.util.Date;
 /**
  * Created by Ian on 5-6-2017.
  */
-public class Chat implements Serializable, Comparable<Chat> {
+public class Chat implements Serializable{
     private String message;
     private Date timeFromSending;
     private String messageFrom;
@@ -30,8 +30,12 @@ public class Chat implements Serializable, Comparable<Chat> {
         return messageFrom;
     }
 
-    @Override
-    public int compareTo(Chat o) {
-        return (int) (this.timeFromSending.getTime() - o.timeFromSending.getTime());
+    public static Comparator<Chat> getComparator() {
+        return new Comparator<Chat>() {
+            @Override
+            public int compare(Chat o1, Chat o2) {
+                return (int) (o1.timeFromSending.getTime() - o2.timeFromSending.getTime());
+            }
+        };
     }
 }

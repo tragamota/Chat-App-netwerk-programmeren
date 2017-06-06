@@ -46,7 +46,7 @@ public class InputListener implements Runnable {
                         Chat chat = (Chat) inputObject;
                         System.out.println(chat.getMessage());
                         chats.add(chat);
-                        Collections.sort(chats);
+                        Collections.sort(chats, Chat.getComparator());
                         for(Chat c : chats){
                             if(tekst.equals("")){
                                 tekst = c.getTimeFromSending() + " " + c.getMessageFrom() + " ; \n" + c.getMessage() + "\n";
